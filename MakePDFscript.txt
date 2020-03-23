@@ -1,0 +1,69 @@
+ 
+
+
+-- here
+on run {input, parameters}
+	repeat with theFile in input
+		
+		set myName to theFile as text
+		set myName to text -3 thru -1 of myName
+		set fallido to true
+		
+		if myName = "ges" or myName = "ocx" or myName = "doc" then --is "Pages" then
+			
+			--mark
+			tell application "Finder"
+				set theFilesFolder to (folder of theFile) as text
+			end tell
+			
+			tell application "Pages"
+				set theDoc to open theFile
+				
+				set theDocName to name of theDoc
+				if myName = "ocx" or myName = "doc" then 
+					set theName to (characters 1 thru -1 of theDocName) as text
+				else
+					set theName to (characters 1 thru -7 of theDocName) as text
+				end if
+			
+				export theDoc as PDF to file ((theFilesFolder & theName & ".pdf") as text)
+				close theDoc
+			end tell
+			--mark
+			set fallido to false
+		end if
+		
+		if myName = "key" or myName = "ptx" or myName = "ppt" then --is "keynote" then
+			--mark
+			tell application "Finder"
+				set theFilesFolder to (folder of theFile) as text
+			end tell
+			
+			tell application "Keynote"
+				set theDoc to open theFile
+				
+				set theDocName to name of theDoc
+				if myName = "ptx" or myName = "ppt" then 
+					set theName to (characters 1 thru -1 of theDocName) as text
+				else
+					set theName to (characters 1 thru -5 of theDocName) as text
+				end if
+				
+				export theDoc as PDF to file ((theFilesFolder & theName & ".pdf") as text)
+				close theDoc
+			end tell
+			--mark
+			set fallido to false
+		end if
+			
+			
+		if fallido then -- Handles both powerpoint and keynotes !!
+			display dialog "❌ Can't convert file(s)! only .key, .ppt, .pptx, .pages, .docx, and .doc are supported"
+		else
+			display dialog "✅ SUCCESS! You just save some time on those pdf conversion(s)!"
+		end if
+		
+	end repeat
+	return input
+end run
+-- here
